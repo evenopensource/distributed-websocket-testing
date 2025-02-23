@@ -15,7 +15,7 @@ export class EvenWsTest {
   private finalTestResult: TestResult[];
   private mutex: Promise<void>;
   private testSuites: TestSuite[];
-  protected serverObj:{[k:string]:number}
+  protected serverObj: { [k: string]: number };
 
   constructor(testConfig: TestConfig) {
     this.testConfig = testConfig;
@@ -31,22 +31,21 @@ export class EvenWsTest {
     this.finalTestResult = [];
     this.mutex = Promise.resolve();
     this.testSuites = this.testConfig.testSuites;
-    this.serverObj = {}
-    this.testConfig.servers.forEach(server => this.serverObj[server.name] = server.port)
+    this.serverObj = {};
+    this.testConfig.servers.forEach(
+      (server) => (this.serverObj[server.name] = server.port)
+    );
   }
-
 
   public async run(
     callbackFn: (testResult: TestResult) => any
   ): Promise<TestResult[]> {
-
     //Creating the necessary log files
     console.log("Creating logger files");
     await initLogger(this.testConfig.servers);
-    if(!initLogger){
-      throw new Error("Internal Error: Error while initializing the logger")
+    if (!initLogger) {
+      throw new Error("Internal Error: Error while initializing the logger");
     }
-
 
     //Run the init script
     console.log("Running Init Data Scripts");
@@ -54,36 +53,42 @@ export class EvenWsTest {
       this.testConfig.dataScript.init,
       this.testConfig.dataScript.initTimeout
     );
-    
+
     //Start the websocket servers
     console.log("Starting the websocket servers");
-    const serverBootPromises: Promise<void>[] = []
+    const serverBootPromises: Promise<void>[] = [];
     this.testConfig.servers.forEach((server) => {
       const startCommand: string = this.testConfig.repo.startCommand.replace(
         "$$$$",
         `${server.port}`
       );
-      serverBootPromises.push(startServer(server.name, this.testConfig.repo.path, startCommand, this.testConfig.repo.serverBootTime))
+      serverBootPromises.push(
+        startServer(
+          server.name,
+          this.testConfig.repo.path,
+          startCommand,
+          this.testConfig.repo.serverBootTime
+        )
+      );
     });
-    await Promise.all(serverBootPromises)
+    await Promise.all(serverBootPromises);
 
-    //Create the worker threads and assign the test suites to it.
-    console.log("Executing the test suites")
+    //Create the worker threads and execute the test suites.
+    console.log("Executing the test suites");
     const testResults: TestResult[] = await this.createWorkers(callbackFn);
 
     //Run the cleanUp script
-    console.log("Running the clean up scripts")
+    console.log("Running the clean up scripts");
     await dataScript(
       this.testConfig.dataScript.cleanUp,
       this.testConfig.dataScript.cleanUpTimeout
     );
-    
+
     //Terminate all the worker threads
     this.workerPool.forEach(async (worker: Worker) => {
       await worker.terminate();
     });
 
-    
     return testResults;
   }
 
@@ -93,10 +98,10 @@ export class EvenWsTest {
       .then(async () => {
         const testSuite: TestSuite | undefined = this.testSuites.shift();
         if (testSuite) {
-          worker.postMessage({testSuite, serverObj:this.serverObj});
-        } 
+          worker.postMessage({ testSuite, serverObj: this.serverObj });
+        }
         // else {
-          // console.log("No test suite to assign to the worker");
+        // console.log("No test suite to assign to the worker");
         // }
       })
       .catch((err) => {

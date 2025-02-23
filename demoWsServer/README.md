@@ -1,0 +1,42 @@
+## Installation
+- `npm install`
+- `npm run start` - starts the websocket server. 
+- NOTE: for this websocket server to start 
+  - Redis pubsub should be started locally using `sudo snap start redis`(works in ubuntu.)
+  - Run `cd httpServerTemp && node index.js` to start the http server
+## Manual testing
+- wscat -c ws://localhost:8080
+- {"action": "student_join","id": "SSN111","year": 3,"section": "A","department": "CS"}
+- Nobody receives any message
+- ########################################################################################
+- wscat -c ws://localhost:8080
+- {"action": "student_join","id": "SSN222","year": 3,"section": "A","department": "CS"}
+- SSN111 should receive message
+- ########################################################################################
+- wscat -c ws://localhost:8080
+- {"action": "student_join","id": "SSN333","year": 3,"section": "B","department": "CS"}
+- Nobody receives any message
+- ######################################################################################## 
+- wscat -c ws://localhost:8081
+- {"action": "student_join","id": "SSN444","year": 3,"section": "A","department": "CS"}
+- SSN111 and SSN222 receives message
+- ######################################################################################## 
+- wscat -c ws://localhost:8080
+- {"action": "student_join","id": "SSN555","year": 3,"section": "B","department": "EEE"}
+- Nobody receives any message
+- ######################################################################################## 
+- wscat -c ws://localhost:8080
+- {"action": "professor_join","id":"SSNProf111"}
+- Nobody receives any message
+- ########################################################################################
+- Send from SSNProf111
+- {"action": "professor_broadcast","stuDepartment":"CS","stuYear": 3,"stuSection": "A","message": "hii this is prof SSNProf111"}
+- SSN1, SSN2, SSN4 should receive message
+- ########################################################################################
+- Send from SSN444
+- {"action": "student_send","profId":"SSNProf111","message": "Hello Prof from SSN444"} 
+- SSNProf111 should receive message
+- ######################################################################################## 
+- Terminate the connection of SSN111
+- {"action": "student_leave","id": "SSN111","year": 3,"section": "A","department": "CS"}
+- Message should be received by SSN222, SSN444

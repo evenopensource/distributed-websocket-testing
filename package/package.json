@@ -1,5 +1,5 @@
 {
-  "name": "even",
+  "name": "evenWsTest",
   "version": "0.0.1",
   "description": "Testing framework for distributed websocket server",
   "main": "./dist/index.js",

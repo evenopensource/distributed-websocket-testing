@@ -9,7 +9,8 @@ import { TestResult } from "./types";
 const indexFunc = async() => {
     const a = new EvenWsTest(testConfig)
     const callbackFn: (testResult: TestResult) => void = (testResult) => console.log(`Test suite: ${testResult.testSuiteId} || Test Case: ${testResult.testCaseId} || Status: ${testResult.isPassed? "Passed" : "Failed"} || Message: ${testResult.message}`)
-    await a.run(callbackFn)
+    const result = await a.run(callbackFn)
+    console.log("Test Report", result)
 }
 
 indexFunc()

@@ -167,7 +167,7 @@ const testConfig: TestConfig = {
       ],
     },
   ],
-  totalTestCases: 18,
+  totalTestCases: 5,
   dataScript: {
     init: `sudo snap start redis
 cd /home/praveen/praveenUnifo/even/demoWsServer/httpServerTemp/ && node index.js`,
