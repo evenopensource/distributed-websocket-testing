@@ -32,7 +32,7 @@ export type TestCaseAddUser = {
   timeout: number
 };
 
-type TestCaseSendMessage = {
+export type TestCaseSendMessage = {
   action: "sendMessage";
   testId: string;
   testDescription:string;
@@ -44,7 +44,7 @@ type TestCaseSendMessage = {
   timeout: number
 };
 
-type TestCaseRemoveUser = {
+export type TestCaseRemoveUser = {
   action: "removeUser";
   testDescription:string;
   testId: string;
@@ -53,7 +53,7 @@ type TestCaseRemoveUser = {
   timeout: number
 };
 
-type TestCase = (TestCaseAddUser | TestCaseSendMessage | TestCaseRemoveUser)[];
+export type TestCase = (TestCaseAddUser | TestCaseSendMessage | TestCaseRemoveUser)[];
 
 export type TestSuite = {
   name: string;

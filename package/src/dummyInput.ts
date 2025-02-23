@@ -10,7 +10,7 @@ const testConfig: TestConfig = {
     description: "Testing dummy websocket server",
     startCommand: "PORT=$$$$ npm run start",
     isSocketIo: false,
-    serverBootTime: 10
+    serverBootTime: 10,
   },
   message: {
     recommendationMessages: {
@@ -59,70 +59,122 @@ const testConfig: TestConfig = {
   testSuites: [
     {
       name: "Test suite 1",
-      description: "When a student is added/leaves other students should receive message.",
+      description:
+        "When a student is added/leaves other students should receive message.",
       id: "100",
       testCases: [
         {
           action: "addUser",
-          testDescription:"Adding SSN111 to server-1",
+          testDescription: "Adding SSN111 to server-1",
           testId: "100-1",
           userName: "SSN111",
           server: "server-1",
           consumedBy: [],
-          addUserMessage:{"action": "student_join","id": "SSN111","year": 3,"section": "A","department": "CS"},
-          timeout:5
+          addUserMessage: {
+            action: "student_join",
+            id: "SSN111",
+            year: 3,
+            section: "A",
+            department: "CS",
+          },
+          timeout: 2,
         },
         {
           action: "addUser",
           testId: "100-2",
-          testDescription:"Adding SSN222 to server-1",
+          testDescription: "Adding SSN222 to server-1",
           userName: "SSN222",
           server: "server-1",
-          consumedBy: [{  users: ["SSN111"],message: {"action": "student_join","id": "SSN222","year": 3,"section": "A","department": "CS"}}],
-          addUserMessage:{"action": "student_join","id": "SSN222","year": 3,"section": "A","department": "CS"},
-          timeout:5
+          consumedBy: [
+            {
+              users: ["SSN111"],
+              message: {
+                action: "student_join",
+                id: "SSN222",
+                year: 3,
+                section: "A",
+                department: "CS",
+              },
+            },
+          ],
+          addUserMessage: {
+            action: "student_join",
+            id: "SSN222",
+            year: 3,
+            section: "A",
+            department: "CS",
+          },
+          timeout: 2,
         },
-        // {
-        //   action: "sendMessage",
-        //   testId: "100-3",
-        //   testDescription:"Sending message from SSNProf111 to SSN111 and SSN222",
-        //   timeout:5,
-        //   producedBy: {
-        //     name: "SSNProf111",
-        //     message: {"action": "professor_broadcast","stuDepartment":"CS","stuYear": 3,"stuSection": "A","message": "hii this is prof SSNProf111"},
-        //   },
-        //   consumedBy: [
-        //     {
-        //       users: ["SSN111", "SSN222"],
-        //       message: {"action": "professor_broadcast","stuDepartment":"CS","stuYear": 3,"stuSection": "A","message": "hii this is prof SSNProf111"},
-        //     },
-        //   ],
-        // },
-        // {
-        //   action: "removeUser",
-        //   testDescription:"Removing SSN111. This should be notified to SSN222",
-        //   testId: "100-4",
-        //   name: "SSN111",
-        //   timeout:5,
-        //   consumedBy: [
-        //     {
-        //       users: ["SSN222"],
-        //       message: {"action": "student_leave","id": "SSN111","year": 3,"section": "A","department": "CS"},
-        //     },
-        //   ],
-        // },
+        {
+          action: "addUser",
+          testId: "100-3",
+          testDescription: "Adding SSNProf111 to server-1",
+          userName: "SSNProf111",
+          server: "server-1",
+          consumedBy: [],
+          addUserMessage: { action: "professor_join", id: "SSNProf111" },
+          timeout: 2,
+        },
+        {
+          action: "sendMessage",
+          testId: "100-4",
+          testDescription:
+            "Sending message from SSNProf111 to SSN111 and SSN222",
+          timeout: 2,
+          producedBy: {
+            name: "SSNProf111",
+            message: {
+              action: "professor_broadcast",
+              stuDepartment: "CS",
+              stuYear: 3,
+              stuSection: "A",
+              message: "hii this is prof SSNProf111",
+            },
+          },
+          consumedBy: [
+            {
+              users: ["SSN111", "SSN222"],
+              message: {
+                action: "professor_broadcast",
+                stuDepartment: "CS",
+                stuYear: 3,
+                stuSection: "A",
+                message: "hii this is prof SSNProf111",
+              },
+            },
+          ],
+        },
+        {
+          action: "removeUser",
+          testDescription: "Removing SSN111. This should be notified to SSN222",
+          testId: "100-5",
+          name: "SSN111",
+          timeout: 2,
+          consumedBy: [
+            {
+              users: ["SSN222"],
+              message: {
+                action: "student_leave",
+                id: "SSN111",
+                year: 3,
+                section: "A",
+                department: "CS",
+              },
+            },
+          ],
+        },
       ],
-    }
+    },
   ],
   totalTestCases: 18,
   dataScript: {
     init: `sudo snap start redis
 cd /home/praveen/praveenUnifo/even/demoWsServer/httpServerTemp/ && node index.js`,
     cleanUp: `sudo snap stop redis`,
-    initTimeout: 10,
-    cleanUpTimeout: 10
-  } 
+    initTimeout: 5,
+    cleanUpTimeout: 5,
+  },
 };
 
 export default testConfig;
-
