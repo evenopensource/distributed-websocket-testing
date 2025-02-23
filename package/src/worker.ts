@@ -1,39 +1,33 @@
 import { parentPort, threadId } from "worker_threads";
 import { TestResult, TestSuite } from "./types";
+import {addUserHandler, removeUserHandler, sendMessageHandler} from "./function/websocket"
+import WebSocket from "ws";
+
+const wsStore:{[k:string]:WebSocket&{evenUserId?:string}} = {}
+const receivedMessage:{[k:string]:any[]} = {}
 
 if (parentPort) {
-  parentPort.on("message", async(testSuite: TestSuite) => {
+  parentPort.on("message", async(input:{testSuite: TestSuite, serverObj:{[k:string]:number}}) => {
+    const {testSuite, serverObj} = input
     for (let testCase of testSuite.testCases) {
-      console.log(
-        `${threadId} is executing test suite with id: ${testCase.id}`
-      );
-    //   const testResult: TestResult = {
-    //     testSuiteId: testSuite.id,
-    //     testCaseId: testCase.id,
-    //     isPassed: true,
-    //     message: "",
-    //   };
-
-      const randomTime: number = Math.floor(Math.random() * (15 - 10 + 1));
-      async function fakeAsyncFunction() {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-                testSuiteId: testSuite.id,
-                testCaseId: testCase.id,
-                isPassed: true,
-                message: `${randomTime}`,
-              });
-          }, randomTime*1000);
-        });
+      if(testCase.action === "addUser"){
+        await addUserHandler(testCase, serverObj, wsStore, receivedMessage)
       }
+      else if(testCase.action === "removeUser"){
+        removeUserHandler()
+      }
+      else if(testCase.action === "sendMessage"){
+        sendMessageHandler()
+      }
+      const testResult: TestResult = {
+        testSuiteId: testSuite.id,
+        testCaseId: testCase.testId,
+        isPassed: true,
+        message: "",
+      };
 
 
-        let testResult = await fakeAsyncFunction();
-        parentPort?.postMessage(testResult);
-
-
-    //   parentPort?.postMessage(testResult);
+      parentPort?.postMessage(testResult);
     }
   });
 } else {

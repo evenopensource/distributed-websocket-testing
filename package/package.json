@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/evenopensource/distributed-websocket-testing#readme",
   "devDependencies": {
+    "@types/ws": "^8.5.14",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
   },

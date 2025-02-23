@@ -28,6 +28,4 @@ const config: Config = {
   tempDirPath: tempDirPath,
 };
 
-console.log(config);
-
 export default config;

@@ -1,7 +1,8 @@
 import { spawn } from "child_process";
 import { logToFile } from "./initLogger";
 
-const startServer = (name:string, path:string, command:string):void => {
+const startServer = async(name:string, path:string, command:string, serverBootTime:number):Promise<void> => {
+  
   const serverProcess = spawn(command, { cwd: path, shell: true });
   serverProcess.stdout.on("data", async(data) => {
     logToFile(name,data)
@@ -14,6 +15,8 @@ const startServer = (name:string, path:string, command:string):void => {
   serverProcess.on("close", (code) => {
     console.log(`Server exited with code ${code}`);
   });
+
+  return new Promise(resolve => setTimeout(() => resolve(), serverBootTime*1000));
 };
 
 export default startServer

@@ -6,10 +6,10 @@ import { TestResult } from "./types";
 
 
 
-(async() => {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+const indexFunc = async() => {
     const a = new EvenWsTest(testConfig)
-    const callbackFn: (testResult: TestResult) => void = (testResult) => console.log(testResult)
+    const callbackFn: (testResult: TestResult) => void = (testResult) => console.log(`Test suite: ${testResult.testSuiteId} || Test Case: ${testResult.testCaseId} || Status: ${testResult.isPassed? "Passed" : "Failed"} || Message: ${testResult.message}`)
     await a.run(callbackFn)
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@22")
-})()
+}
+
+indexFunc()

@@ -8,6 +8,7 @@ type Repo = {
   description: string;
   startCommand: string;
   isSocketIo: boolean;
+  serverBootTime: number;
 };
 
 export type Server = {
@@ -20,29 +21,36 @@ type ConsumerMessage = {
   message: any;
 };
 
-type TestCaseAddUser = {
+export type TestCaseAddUser = {
   action: "addUser";
-  id: string;
-  name: string;
+  testId: string;
+  testDescription:string;
+  userName: string;
   server: string;
+  addUserMessage: any;
   consumedBy: ConsumerMessage[];
+  timeout: number
 };
 
 type TestCaseSendMessage = {
   action: "sendMessage";
-  id: string;
+  testId: string;
+  testDescription:string;
   producedBy: {
     name: string;
     message: any;
   };
   consumedBy: ConsumerMessage[];
+  timeout: number
 };
 
 type TestCaseRemoveUser = {
   action: "removeUser";
-  id: string;
+  testDescription:string;
+  testId: string;
   name: string;
   consumedBy: ConsumerMessage[];
+  timeout: number
 };
 
 type TestCase = (TestCaseAddUser | TestCaseSendMessage | TestCaseRemoveUser)[];
@@ -95,3 +103,4 @@ export type Config = {
   platform: "windows" | "mac" | "linux";
   tempDirPath: string;
 };
+
