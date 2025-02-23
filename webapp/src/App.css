@@ -1,0 +1,10 @@
+/* Ensures the body does not force centering */
+body, html {
+  height: auto !important;
+  display: block !important;
+}
+#root {
+  display: block !important;
+  background-color:blue !important;
+  width: 100vw !important;
+}
